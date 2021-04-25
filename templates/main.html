@@ -1,7 +1,5 @@
 <html>
   <body>
-	  <button id="connectbtn" onclick="requestPermission()">Connect</button><br>
-
     <input type="range" id="channel1" name="channel1" min="-50" max="50">
     <label for="channel1">Channel 1</label>
     <div id="outputdiv"></div>
@@ -13,18 +11,24 @@ var socket = false;
 
 var updown = 0;
 var leftright = 0;
+var channel1 = 0;
+
+console.log('test');
+console.log(document.getElementById('channel1'));
+onRangeChange(document.getElementById('channel1'), handleChannel1);
+finishRequest();
 
 function sendToFlask()
 {
     const xhr = new XMLHttpRequest();
     const data = new FormData();
 
-    data.append("updown", updown);
+    data.append("updown", channel1);
     data.append("leftright", leftright);
 
     xhr.open("POST", "moveservos");
     xhr.send(data);
-    output.innerHTML= "Channel 1: " + updown + "<br>Channel 2: " + leftright;
+    output.innerHTML= "Channel 1: " + channel1 + "<br>Channel 2: " + leftright;
 }
 
 function handleRotation(event)
@@ -33,29 +37,16 @@ function handleRotation(event)
     leftright = Math.round(event.beta);
 }
 
-function requestPermission()
-{
-    if (typeof(DeviceMotionEvent) !== 'undefined' && typeof(DeviceMotionEvent.requestPermission) === 'function')
-    {
-        output.innerHTML = "iOS 13+ device";
-        DeviceMotionEvent.requestPermission().
-        then(response => {
-            if (response === 'granted') {
-                output.innerHTML = "iOS 13+ device (Permission granted)";
-                window.addEventListener('deviceorientation', handleRotation);
-            }
-            else {
-                output.innerHTML = "iOS 13+ device (Permission denied)";
-            }
-            finishRequest();
-        }).catch(console.error);
-    }
-    else
-    {
-        //output.innerHTML = "Non-iOS 13 device";
-        window.addEventListener('deviceorientation', handleRotation);
-        finishRequest();
-    }
+function handleChannel1(event) {
+	console.log(event.target.value);
+	channel1 = event.target.value;
+}
+
+//https://stackoverflow.com/questions/18544890/onchange-event-on-input-type-range-is-not-triggering-in-firefox-while-dragging
+function onRangeChange(r,f) {
+  var n,c,m;
+  r.addEventListener("input",function(e){n=1;c=e.target.value;if(c!=m)f(e);m=c;});
+  r.addEventListener("change",function(e){if(!n)f(e);});
 }
 
 function finishRequest()

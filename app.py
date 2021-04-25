@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request
+from flask.logging import default_handler
 from time import sleep
 import pigpio
 import logging
@@ -40,10 +41,12 @@ def moveServos():
     # Get the values from the request
     horizontal = 25 * int(request.form["updown"])
     vertical = 25 * int(request.form["leftright"])
-    print(str(horizontal) + ", " + str(vertical))
+    print("13: " + str(horizontal) + "\t" + str(HORIZ_SERVO_CENTER - horizontal))
+    #print("web: " + str(horizontal) + ", " + str(vertical))
+    #print("realx: " + str(HORIZ_SERVO_CENTER - horizontal))
 
     # Move the Servos
-    setServoDuty(HORIZ_SERVO_PORT, clamp(HORIZ_SERVO_CENTER - horizontal, 500, 2500))
+    setServoDuty(HORIZ_SERVO_PORT, clamp(HORIZ_SERVO_CENTER - horizontal, 600, 2500))
     setServoDuty(VERT_SERVO_PORT, clamp(VERT_SERVO_CENTER - vertical, 500, 2500))
 
     # Wait for 0.2s so that the servos have time to move
@@ -62,3 +65,4 @@ def moveServos():
 if __name__ == "__main__":
     #app.run(host="0.0.0.0", ssl_context='adhoc')
     app.run(host="0.0.0.0")
+    app.logger.removeHandler(default_handler)
