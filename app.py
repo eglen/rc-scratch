@@ -1,74 +1,7 @@
-from flask import Flask, render_template_string, request
+from flask import Flask, render_template, request
 from time import sleep
 import pigpio
 import logging
-
-# This HTML page + JS will be served when the root path is requested with a GET
-TPL = '''
-<html>
-  <body>
-    <button id="connectbtn" onclick="requestPermission()">Connect</button>
-    <div id="outputdiv"></div>
-  </body>
-  <script>
-    var output = document.getElementById("outputdiv");
-var btn = document.getElementById("connectbtn");
-var socket = false;
-
-var updown = 0;
-var leftright = 0;
-
-function sendToFlask()
-{
-    const xhr = new XMLHttpRequest();
-    const data = new FormData();
-
-    data.append("updown", updown);
-    data.append("leftright", leftright);
-
-    xhr.open("POST", "moveservos");
-    xhr.send(data);
-}
-
-function handleRotation(event)
-{
-    updown = Math.round(event.gamma);
-    leftright = Math.round(event.beta);
-}
-
-function requestPermission()
-{
-    if (typeof(DeviceMotionEvent) !== 'undefined' && typeof(DeviceMotionEvent.requestPermission) === 'function')
-    {
-        output.innerHTML = "iOS 13+ device";
-        DeviceMotionEvent.requestPermission().
-        then(response => {
-            if (response === 'granted') {
-                output.innerHTML = "iOS 13+ device (Permission granted)";
-                window.addEventListener('deviceorientation', handleRotation);
-            }
-            else {
-                output.innerHTML = "iOS 13+ device (Permission denied)";
-            }
-            finishRequest();
-        }).catch(console.error);
-    }
-    else
-    {
-        output.innerHTML = "Non-iOS 13 device";
-        window.addEventListener('deviceorientation', handleRotation);
-        finishRequest();
-    }
-}
-
-function finishRequest()
-{
-    setInterval(sendToFlask, 250);
-}
-
-  </script>
-</html>
-'''
 
 # The servos are connected on these GPIO pins (BCM numbering)
 HORIZ_SERVO_PORT = 13
@@ -98,7 +31,7 @@ def clamp(num, minimum, maximum):
 # Serve the HTML file when the root path is requested
 @app.route("/")
 def serveRoot():
-    return render_template_string(TPL)
+    return render_template('main.html')
 
 # Expose an endpoint for sending the servo coordinates
 # from the JS to the Flask Backend
