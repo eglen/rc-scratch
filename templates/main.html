@@ -23,8 +23,8 @@
         const xhr = new XMLHttpRequest();
         const data = new FormData();
 
-        data.append("updown", channel1);
-        data.append("leftright", channel2);
+        data.append("rudder", channel1);
+        data.append("throttle", channel2);
 
         xhr.open("POST", "moveservos");
         xhr.send(data);

@@ -39,15 +39,13 @@ def serveRoot():
 @app.route("/moveservos", methods=["POST"])
 def moveServos():
     # Get the values from the request
-    horizontal = 25 * int(request.form["updown"])
-    vertical = 25 * int(request.form["leftright"])
-    print("13: " + str(horizontal) + "\t" + str(HORIZ_SERVO_CENTER - horizontal))
-    #print("web: " + str(horizontal) + ", " + str(vertical))
-    #print("realx: " + str(HORIZ_SERVO_CENTER - horizontal))
+    horizontal = 25 * int(request.form["rudder"])
+    vertical = 25 * int(request.form["throttle"])
+    print("13: " + str(horizontal) + "\t" + str(HORIZ_SERVO_CENTER - horizontal) + "\t 12: " + str(vertical) + "\t" + str(VERT_SERVO_CENTER-vertical))
 
     # Move the Servos
-    setServoDuty(HORIZ_SERVO_PORT, clamp(HORIZ_SERVO_CENTER - horizontal, 600, 2500))
-    setServoDuty(VERT_SERVO_PORT, clamp(VERT_SERVO_CENTER - vertical, 500, 2500))
+    setServoDuty(HORIZ_SERVO_PORT, clamp(HORIZ_SERVO_CENTER - horizontal, 500, 2500))
+    setServoDuty(VERT_SERVO_PORT, clamp(VERT_SERVO_CENTER - vertical, 600, 2500))
 
     # Wait for 0.2s so that the servos have time to move
     sleep(0.2)
