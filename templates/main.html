@@ -1,10 +1,33 @@
 <html>
+  <head>
+    <style>
+      input[type=range][orient=vertical] {
+        writing-mode: bt-lr; /* IE */
+        -webkit-appearance: slider-vertical; /* WebKit */
+        width: 30px;
+        height: 300px;
+        padding: 0 5px;
+      }
+
+      #channel1 {
+        width: 800px;
+        height: 30px;
+      }
+
+      #video {
+        background-color:#999999;
+        width:800px;
+        height:300px;
+        float: left;
+      }
+    </style>
+  </head>
   <body>
+    <div id="video" style="">Video Feed</div>
+
+    <input type="range" id="channel2" name="channel2" min="-50" max="50" orient="vertical">
     <input type="range" id="channel1" name="channel1" min="-50" max="50">
-    <label for="channel1">Rudder</label>
-    <input type="range" id="channel2" name="channel2" min="-50" max="50">
-    <label for="channel1">Throttle</label>
-    <div id="outputdiv"></div>
+    <!--<div id="outputdiv"></div>-->
   </body>
   <script>
     var output = document.getElementById("outputdiv");
@@ -28,7 +51,7 @@
 
         xhr.open("POST", "moveservos");
         xhr.send(data);
-        output.innerHTML= "Channel 1: " + channel1 + "<br>Channel 2: " + channel2;
+        //output.innerHTML= "Channel 1: " + channel1 + "<br>Channel 2: " + channel2;
     }
 
     function handleChannel1(event) {
