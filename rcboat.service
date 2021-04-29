@@ -1,0 +1,11 @@
+[Unit]
+Description=RC Boat
+After=network.target pigpiod.service
+
+[Service]
+WorkingDirectory=/home/pi/rc-scratch/
+ExecStart=/usr/bin/python /home/pi/rc-scratch/app.py > /home/pi/rc-scratch/server.log 2>&1
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
