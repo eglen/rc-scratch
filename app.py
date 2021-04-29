@@ -35,6 +35,9 @@ app = Flask(__name__)
 # GPIO Info
 gpio = pigpio.pi()
 
+#Power LED ON
+gpio.write(5,1)
+
 def setupGPIO():
     gpio.set_servo_pulsewidth(HORIZ_SERVO_PORT, 0)
     gpio.set_servo_pulsewidth(VERT_SERVO_PORT, 0)
@@ -59,6 +62,9 @@ def moveServos():
     vertical = 25 * int(request.form["throttle"])
     print("13: " + str(horizontal) + "\t" + str(HORIZ_SERVO_CENTER - horizontal) + "\t 12: " + str(vertical) + "\t" + str(VERT_SERVO_CENTER-vertical))
 
+    #Data LED ON
+    gpio.write(6,1)
+
     # Move the Servos
     setServoDuty(HORIZ_SERVO_PORT, clamp(HORIZ_SERVO_CENTER - horizontal, 500, 2500))
     setServoDuty(VERT_SERVO_PORT, clamp(VERT_SERVO_CENTER - vertical, 600, 2500))
@@ -69,6 +75,9 @@ def moveServos():
     # Stop the servo motors to save energy and reduce noise
     gpio.set_servo_pulsewidth(HORIZ_SERVO_PORT, 0)
     gpio.set_servo_pulsewidth(VERT_SERVO_PORT, 0)
+
+    #Data LED OFF
+    gpio.write(6,0)
 
     # Return empty request (Should return a 200 OK with an empty body)
     return ""
