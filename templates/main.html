@@ -23,7 +23,7 @@
     </style>
   </head>
   <body>
-    <div id="video" style="">Video Feed</div>
+    <img id="video" src="{{ url_for('video_feed') }}">
 
     <input type="range" id="throttle" name="throttle" min="-50" max="50" orient="vertical">
     <input type="range" id="rudder" name="rudder" min="-50" max="50">

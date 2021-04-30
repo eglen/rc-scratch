@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, Response
 from flask.logging import default_handler
+from flask-video-streaming.camera_pi import Camera
 from time import sleep
-import pigpio
 from logging.config import dictConfig
+import pigpio
 
 dictConfig({
     'version': 1,
@@ -81,6 +82,18 @@ def moveServos():
 
     # Return empty request (Should return a 200 OK with an empty body)
     return ""
+
+#https://blog.miguelgrinberg.com/post/video-streaming-with-flask
+def gen(camera):
+    while True:
+        frame = camera.get_frame()
+        yield (b'--frame\r\n'
+               b'Content-type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
+@app.route('/video_feed')
+def video_feed():
+    return Response(gen(Camera()),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
 
 # Run the app on the local development server
 # Accept any IP address

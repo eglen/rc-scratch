@@ -22,3 +22,7 @@ https://www.stderr.nl/Blog/Hardware/RaspberryPi/PowerButton.html
 
 ### Serial port power LED hack
 https://howchoo.com/g/ytzjyzy4m2e/build-a-simple-raspberry-pi-led-power-status-indicator
+
+### Pi Camera
+https://github.com/miguelgrinberg/flask-video-streaming
+`pip install picamera`
