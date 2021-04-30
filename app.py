@@ -70,7 +70,7 @@ def moveServos():
     setServoDuty(VERT_SERVO_PORT, clamp(VERT_SERVO_CENTER - vertical, 600, 2500))
 
     # Wait for 0.2s so that the servos have time to move
-    sleep(0.2)
+    sleep(0.1)
 
     # Stop the servo motors to save energy and reduce noise
     gpio.set_servo_pulsewidth(HORIZ_SERVO_PORT, 0)

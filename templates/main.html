@@ -27,44 +27,37 @@
 
     <input type="range" id="channel2" name="channel2" min="-50" max="50" orient="vertical">
     <input type="range" id="channel1" name="channel1" min="-50" max="50">
-    <!--<div id="outputdiv"></div>-->
+
   </body>
   <script>
-    var output = document.getElementById("outputdiv");
-
-    var channel1 = 0;
-    var channel2 = 0;
+    var rudder = 0;
+    var throttle = 0;
 
     console.log('test');
     console.log(document.getElementById('channel1'));
     onRangeChange(document.getElementById('channel1'), handleChannel1);
     onRangeChange(document.getElementById('channel2'), handleChannel2);
-    finishRequest();
 
     function sendToFlask()
     {
         const xhr = new XMLHttpRequest();
         const data = new FormData();
 
-        data.append("rudder", channel1);
-        data.append("throttle", channel2);
+        data.append("rudder", rudder);
+        data.append("throttle", throttle);
 
         xhr.open("POST", "moveservos");
         xhr.send(data);
-        //output.innerHTML= "Channel 1: " + channel1 + "<br>Channel 2: " + channel2;
     }
 
     function handleChannel1(event) {
-      channel1 = event.target.value;
+      rudder = event.target.value;
+      sendToFlask();
     }
 
     function handleChannel2(event) {
-      channel2 = event.target.value;
-    }
-
-    function finishRequest()
-    {
-      setInterval(sendToFlask, 250);
+      throttle = event.target.value;
+      sendToFlask()
     }
 
     //https://stackoverflow.com/questions/18544890/onchange-event-on-input-type-range-is-not-triggering-in-firefox-while-dragging
