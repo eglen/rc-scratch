@@ -9,7 +9,7 @@
         padding: 0 5px;
       }
 
-      #channel1 {
+      input[type=range] {
         width: 800px;
         height: 30px;
       }
@@ -25,18 +25,16 @@
   <body>
     <div id="video" style="">Video Feed</div>
 
-    <input type="range" id="channel2" name="channel2" min="-50" max="50" orient="vertical">
-    <input type="range" id="channel1" name="channel1" min="-50" max="50">
+    <input type="range" id="throttle" name="throttle" min="-50" max="50" orient="vertical">
+    <input type="range" id="rudder" name="rudder" min="-50" max="50">
 
   </body>
   <script>
     var rudder = 0;
     var throttle = 0;
 
-    console.log('test');
-    console.log(document.getElementById('channel1'));
-    onRangeChange(document.getElementById('channel1'), handleChannel1);
-    onRangeChange(document.getElementById('channel2'), handleChannel2);
+    onRangeChange(document.getElementById('rudder'), handleRudder);
+    onRangeChange(document.getElementById('throttle'), handleThrottle);
 
     function sendToFlask()
     {
@@ -50,12 +48,12 @@
         xhr.send(data);
     }
 
-    function handleChannel1(event) {
+    function handleRudder(event) {
       rudder = event.target.value;
       sendToFlask();
     }
 
-    function handleChannel2(event) {
+    function handleThrottle(event) {
       throttle = event.target.value;
       sendToFlask()
     }
