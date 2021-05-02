@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, Response
 from flask.logging import default_handler
-from flask-video-streaming.camera_pi import Camera
+from camera_pi import Camera
 from time import sleep
 from logging.config import dictConfig
 import pigpio
