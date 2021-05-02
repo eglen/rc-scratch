@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, Response
 from flask.logging import default_handler
 from camera_pi import Camera
+import threading
 from time import sleep
 from logging.config import dictConfig
 import pigpio
@@ -35,9 +36,6 @@ app = Flask(__name__)
 
 # GPIO Info
 gpio = pigpio.pi()
-
-#Power LED ON
-gpio.write(5,1)
 
 def setupGPIO():
     gpio.set_servo_pulsewidth(HORIZ_SERVO_PORT, 0)
@@ -95,10 +93,27 @@ def video_feed():
     return Response(gen(Camera()),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
+def app_liveness_led():
+    #App LED blink pattern
+    while True:
+        gpio.write(5,1)
+        sleep(0.1)
+        gpio.write(5,0)
+        sleep(0.1)
+        gpio.write(5,1)
+        sleep(0.1)
+        gpio.write(5,0)
+        sleep(2)
+
+
 # Run the app on the local development server
 # Accept any IP address
 # Create ad-hoc SSL encryption (needed for iOS 13 support)
 if __name__ == "__main__":
     #app.run(host="0.0.0.0", ssl_context='adhoc')
+    liveness = threading.Thread(target=app_liveness_led, args=())
+    liveness.daemon = True
+    liveness.start()
     app.run(host="0.0.0.0")
     app.logger.removeHandler(default_handler)
+
