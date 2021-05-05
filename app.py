@@ -26,9 +26,14 @@ dictConfig({
 HORIZ_SERVO_PORT = 13
 VERT_SERVO_PORT= 12
 
+#LED GPIO
+LIVENESS_PORT = 4
+ACTIVITY_PORT = 18
+
 # Servo Info
 HORIZ_SERVO_CENTER = 1750
 VERT_SERVO_CENTER = 1500
+
 
 # Create Flask App
 app = Flask(__name__)
@@ -62,7 +67,7 @@ def moveServos():
     print("13: " + str(horizontal) + "\t" + str(HORIZ_SERVO_CENTER - horizontal) + "\t 12: " + str(vertical) + "\t" + str(VERT_SERVO_CENTER-vertical))
 
     #Data LED ON
-    gpio.write(6,1)
+    gpio.write(ACTIVITY_PORT,1)
 
     # Move the Servos
     setServoDuty(HORIZ_SERVO_PORT, clamp(HORIZ_SERVO_CENTER - horizontal, 500, 2500))
@@ -76,7 +81,7 @@ def moveServos():
     gpio.set_servo_pulsewidth(VERT_SERVO_PORT, 0)
 
     #Data LED OFF
-    gpio.write(6,0)
+    gpio.write(ACTIVITY_PORT,0)
 
     # Return empty request (Should return a 200 OK with an empty body)
     return ""
@@ -96,13 +101,13 @@ def video_feed():
 def app_liveness_led():
     #App LED blink pattern
     while True:
-        gpio.write(5,1)
+        gpio.write(LIVENESS_PORT,1)
         sleep(0.1)
-        gpio.write(5,0)
+        gpio.write(LIVENESS_PORT,0)
         sleep(0.1)
-        gpio.write(5,1)
+        gpio.write(LIVENESS_PORT,1)
         sleep(0.1)
-        gpio.write(5,0)
+        gpio.write(LIVENESS_PORT,0)
         sleep(2)
 
 
