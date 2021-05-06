@@ -31,12 +31,13 @@ LIVENESS_PORT = 17
 ACTIVITY_PORT = 22
 
 # Servo Info
-HORIZ_SERVO_CENTER = 1750
-HORIZ_SERVO_MIN = 600
-HORIZ_SERVO_MAX = 2500
-VERT_SERVO_CENTER = 1500
+
+HORIZ_SERVO_MIN = 1150 #Actual servo min 600
+HORIZ_SERVO_MAX = 2125 #Actual servo max 2500
+HORIZ_SERVO_CENTER = HORIZ_SERVO_MIN + (HORIZ_SERVO_MAX - HORIZ_SERVO_MIN)/2
 VERT_SERVO_MIN = 600
 VERT_SERVO_MAX = 2500
+VERT_SERVO_CENTER = VERT_SERVO_MIN + (VERT_SERVO_MAX - VERT_SERVO_MIN)/2
 
 #Command range
 MIN_COMMAND = -50
@@ -71,7 +72,11 @@ def moveServos():
     # Get the values from the request
     horizontal = 25 * int(request.form["horizontal"])
     vertical = 25 * int(request.form["vertical"])
-    print("H: " + str(horizontal) + "\t" + str(HORIZ_SERVO_CENTER - horizontal) + "\t V: " + str(vertical) + "\t" + str(VERT_SERVO_CENTER-vertical))
+
+    #Map request scale to servo scale
+
+    print("H: " + str(horizontal) + "\t" + str(HORIZ_SERVO_CENTER - horizontal) + "\t" + str(clamp(HORIZ_SERVO_CENTER - horizontal, HORIZ_SERVO_MIN, HORIZ_SERVO_MAX)) +
+          "\t V: " + str(vertical) + "\t" + str(VERT_SERVO_CENTER-vertical) + "\t" + str(clamp(VERT_SERVO_CENTER - vertical, VERT_SERVO_MIN, VERT_SERVO_MAX)))
 
     #Data LED ON
     gpio.write(ACTIVITY_PORT,1)
@@ -80,18 +85,21 @@ def moveServos():
     setServoDuty(HORIZ_SERVO_PORT, clamp(HORIZ_SERVO_CENTER - horizontal, HORIZ_SERVO_MIN, HORIZ_SERVO_MAX))
     setServoDuty(VERT_SERVO_PORT, clamp(VERT_SERVO_CENTER - vertical, VERT_SERVO_MIN, VERT_SERVO_MAX))
 
-    # Wait for 0.2s so that the servos have time to move
-    sleep(0.1)
+    # Don't sleep in the handling thread, leave that to the client
+    #sleep(0.05)
 
-    # Stop the servo motors to save energy and reduce noise
-    gpio.set_servo_pulsewidth(HORIZ_SERVO_PORT, 0)
-    gpio.set_servo_pulsewidth(VERT_SERVO_PORT, 0)
+    # We've got enough power and high enough quality servos to prioritize responsiveness
+    #gpio.set_servo_pulsewidth(HORIZ_SERVO_PORT, 0)
+    #gpio.set_servo_pulsewidth(VERT_SERVO_PORT, 0)
 
     #Data LED OFF
     gpio.write(ACTIVITY_PORT,0)
 
     # Return empty request (Should return a 200 OK with an empty body)
     return ""
+
+#def mapRequestToServoScale(requestValue, servoMin, servoMax, reqMin, reqMax):
+#    scale
 
 #https://blog.miguelgrinberg.com/post/video-streaming-with-flask
 def gen(camera):
@@ -120,7 +128,6 @@ def app_liveness_led():
 
 # Run the app on the local development server
 # Accept any IP address
-# Create ad-hoc SSL encryption (needed for iOS 13 support)
 if __name__ == "__main__":
     #app.run(host="0.0.0.0", ssl_context='adhoc')
     liveness = threading.Thread(target=app_liveness_led, args=())

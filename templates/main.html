@@ -33,8 +33,8 @@
     var horizontal = 0;
     var vertical = 0;
 
-    onRangeChange(document.getElementById('horizontal'), handleHorizontal);
-    onRangeChange(document.getElementById('vertical'), handleVertical);
+    onRangeChange(document.getElementById('horizontal'), throttleEvents(handleHorizontal, 50));
+    onRangeChange(document.getElementById('vertical'), throttleEvents(handleVertical, 50));
 
     function sendToFlask()
     {
@@ -56,6 +56,19 @@
     function handleVertical(event) {
       vertical = event.target.value;
       sendToFlask()
+    }
+
+    function throttleEvents (callback, limit) {
+      var waiting = false;                      // Initially, we're not waiting
+      return function () {                      // We return a throttled function
+        if (!waiting) {                       // If we're not waiting
+          callback.apply(this, arguments);  // Execute users function
+          waiting = true;                   // Prevent future invocations
+          setTimeout(function () {          // After a period of time
+            waiting = false;              // And allow future invocations
+          }, limit);
+        }
+      }
     }
 
     //https://stackoverflow.com/questions/18544890/onchange-event-on-input-type-range-is-not-triggering-in-firefox-while-dragging
