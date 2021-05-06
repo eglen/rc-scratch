@@ -25,36 +25,36 @@
   <body>
     <img id="video" src="{{ url_for('video_feed') }}">
 
-    <input type="range" id="throttle" name="throttle" min="-50" max="50" orient="vertical">
-    <input type="range" id="rudder" name="rudder" min="-50" max="50">
+    <input type="range" id="vertical" name="vertical" min="-50" max="50" orient="vertical">
+    <input type="range" id="horizontal" name="horizontal" min="-50" max="50">
 
   </body>
   <script>
-    var rudder = 0;
-    var throttle = 0;
+    var horizontal = 0;
+    var vertical = 0;
 
-    onRangeChange(document.getElementById('rudder'), handleRudder);
-    onRangeChange(document.getElementById('throttle'), handleThrottle);
+    onRangeChange(document.getElementById('horizontal'), handleHorizontal);
+    onRangeChange(document.getElementById('vertical'), handleVertical);
 
     function sendToFlask()
     {
         const xhr = new XMLHttpRequest();
         const data = new FormData();
 
-        data.append("rudder", rudder);
-        data.append("throttle", throttle);
+        data.append("horizontal", horizontal);
+        data.append("vertical", vertical);
 
         xhr.open("POST", "moveservos");
         xhr.send(data);
     }
 
-    function handleRudder(event) {
-      rudder = event.target.value;
+    function handleHorizontal(event) {
+      horizontal = event.target.value;
       sendToFlask();
     }
 
-    function handleThrottle(event) {
-      throttle = event.target.value;
+    function handleVertical(event) {
+      vertical = event.target.value;
       sendToFlask()
     }
 

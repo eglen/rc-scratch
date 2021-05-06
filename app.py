@@ -32,8 +32,15 @@ ACTIVITY_PORT = 22
 
 # Servo Info
 HORIZ_SERVO_CENTER = 1750
+HORIZ_SERVO_MIN = 600
+HORIZ_SERVO_MAX = 2500
 VERT_SERVO_CENTER = 1500
+VERT_SERVO_MIN = 600
+VERT_SERVO_MAX = 2500
 
+#Command range
+MIN_COMMAND = -50
+MAX_COMMAND = 50
 
 # Create Flask App
 app = Flask(__name__)
@@ -62,16 +69,16 @@ def serveRoot():
 @app.route("/moveservos", methods=["POST"])
 def moveServos():
     # Get the values from the request
-    horizontal = 25 * int(request.form["rudder"])
-    vertical = 25 * int(request.form["throttle"])
-    print("13: " + str(horizontal) + "\t" + str(HORIZ_SERVO_CENTER - horizontal) + "\t 12: " + str(vertical) + "\t" + str(VERT_SERVO_CENTER-vertical))
+    horizontal = 25 * int(request.form["horizontal"])
+    vertical = 25 * int(request.form["vertical"])
+    print("H: " + str(horizontal) + "\t" + str(HORIZ_SERVO_CENTER - horizontal) + "\t V: " + str(vertical) + "\t" + str(VERT_SERVO_CENTER-vertical))
 
     #Data LED ON
     gpio.write(ACTIVITY_PORT,1)
 
     # Move the Servos
-    setServoDuty(HORIZ_SERVO_PORT, clamp(HORIZ_SERVO_CENTER - horizontal, 500, 2500))
-    setServoDuty(VERT_SERVO_PORT, clamp(VERT_SERVO_CENTER - vertical, 600, 2500))
+    setServoDuty(HORIZ_SERVO_PORT, clamp(HORIZ_SERVO_CENTER - horizontal, HORIZ_SERVO_MIN, HORIZ_SERVO_MAX))
+    setServoDuty(VERT_SERVO_PORT, clamp(VERT_SERVO_CENTER - vertical, VERT_SERVO_MIN, VERT_SERVO_MAX))
 
     # Wait for 0.2s so that the servos have time to move
     sleep(0.1)
