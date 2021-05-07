@@ -33,15 +33,19 @@ ACTIVITY_PORT = 22
 # Servo Info
 
 HORIZ_SERVO_MIN = 1150 #Actual servo min 600
-HORIZ_SERVO_MAX = 2125 #Actual servo max 2500
+HORIZ_SERVO_MAX = 2050 #Actual servo max 2500
 HORIZ_SERVO_CENTER = HORIZ_SERVO_MIN + (HORIZ_SERVO_MAX - HORIZ_SERVO_MIN)/2
-VERT_SERVO_MIN = 600
-VERT_SERVO_MAX = 2500
+
+VERT_SERVO_MIN = 800
+VERT_SERVO_MAX = 1700
 VERT_SERVO_CENTER = VERT_SERVO_MIN + (VERT_SERVO_MAX - VERT_SERVO_MIN)/2
 
 #Command range
 MIN_COMMAND = -50
 MAX_COMMAND = 50
+
+HORIZ_CONVERSION = (HORIZ_SERVO_MAX - HORIZ_SERVO_CENTER)/MAX_COMMAND
+VERT_CONVERSION = (VERT_SERVO_MAX - VERT_SERVO_CENTER)/MAX_COMMAND
 
 # Create Flask App
 app = Flask(__name__)
@@ -69,17 +73,15 @@ def serveRoot():
 # from the JS to the Flask Backend
 @app.route("/moveservos", methods=["POST"])
 def moveServos():
-    # Get the values from the request
-    horizontal = 25 * int(request.form["horizontal"])
-    vertical = 25 * int(request.form["vertical"])
+    #Data LED ON
+    gpio.write(ACTIVITY_PORT, 1)
 
-    #Map request scale to servo scale
+    # Get the values from the request
+    horizontal = HORIZ_CONVERSION * int(request.form["horizontal"])
+    vertical = VERT_CONVERSION * int(request.form["vertical"])
 
     print("H: " + str(horizontal) + "\t" + str(HORIZ_SERVO_CENTER - horizontal) + "\t" + str(clamp(HORIZ_SERVO_CENTER - horizontal, HORIZ_SERVO_MIN, HORIZ_SERVO_MAX)) +
-          "\t V: " + str(vertical) + "\t" + str(VERT_SERVO_CENTER-vertical) + "\t" + str(clamp(VERT_SERVO_CENTER - vertical, VERT_SERVO_MIN, VERT_SERVO_MAX)))
-
-    #Data LED ON
-    gpio.write(ACTIVITY_PORT,1)
+          "\t V: " + str(vertical) + "\t" + str(VERT_SERVO_CENTER - vertical) + "\t" + str(clamp(VERT_SERVO_CENTER - vertical, VERT_SERVO_MIN, VERT_SERVO_MAX)))
 
     # Move the Servos
     setServoDuty(HORIZ_SERVO_PORT, clamp(HORIZ_SERVO_CENTER - horizontal, HORIZ_SERVO_MIN, HORIZ_SERVO_MAX))
@@ -97,9 +99,6 @@ def moveServos():
 
     # Return empty request (Should return a 200 OK with an empty body)
     return ""
-
-#def mapRequestToServoScale(requestValue, servoMin, servoMax, reqMin, reqMax):
-#    scale
 
 #https://blog.miguelgrinberg.com/post/video-streaming-with-flask
 def gen(camera):
