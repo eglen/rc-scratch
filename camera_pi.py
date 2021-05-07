@@ -13,7 +13,7 @@ class Camera(BaseCamera):
             #camera.vflip = True
             #camera.hflip = True
             stream = io.BytesIO()
-            for _ in camera.capture_continuous(stream, 'jpeg', use_video_port=True, resize=(640, 360)):
+            for _ in camera.capture_continuous(stream, 'jpeg', use_video_port=True, resize=(320, 180)):
                 # return current frame
                 stream.seek(0)
                 yield stream.read()
