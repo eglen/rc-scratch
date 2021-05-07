@@ -32,8 +32,8 @@ ACTIVITY_PORT = 22
 
 # Servo Info
 
-HORIZ_SERVO_MIN = 1150 #Actual servo min 600
-HORIZ_SERVO_MAX = 2050 #Actual servo max 2500
+HORIZ_SERVO_MIN = 1250 #Actual servo min 600
+HORIZ_SERVO_MAX = 2040 #Actual servo max 2500
 HORIZ_SERVO_CENTER = HORIZ_SERVO_MIN + (HORIZ_SERVO_MAX - HORIZ_SERVO_MIN)/2
 
 VERT_SERVO_MIN = 800
@@ -95,7 +95,7 @@ def moveServos():
     #gpio.set_servo_pulsewidth(VERT_SERVO_PORT, 0)
 
     #Data LED OFF
-    gpio.write(ACTIVITY_PORT,0)
+    gpio.write(ACTIVITY_PORT, 0)
 
     # Return empty request (Should return a 200 OK with an empty body)
     return ""
@@ -115,13 +115,13 @@ def video_feed():
 def app_liveness_led():
     #App LED blink pattern
     while True:
-        gpio.write(LIVENESS_PORT,1)
+        gpio.write(LIVENESS_PORT, 1)
         sleep(0.1)
-        gpio.write(LIVENESS_PORT,0)
+        gpio.write(LIVENESS_PORT, 0)
         sleep(0.1)
-        gpio.write(LIVENESS_PORT,1)
+        gpio.write(LIVENESS_PORT, 1)
         sleep(0.1)
-        gpio.write(LIVENESS_PORT,0)
+        gpio.write(LIVENESS_PORT, 0)
         sleep(2)
 
 
