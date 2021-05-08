@@ -47,6 +47,8 @@ MAX_COMMAND = 50
 HORIZ_CONVERSION = (HORIZ_SERVO_MAX - HORIZ_SERVO_CENTER)/MAX_COMMAND
 VERT_CONVERSION = (VERT_SERVO_MAX - VERT_SERVO_CENTER)/MAX_COMMAND
 
+blink_pattern = ((1, 0.1), (0, 0.1), (1,0.1), (0, 2))
+
 # Create Flask App
 app = Flask(__name__, static_url_path='', static_folder='lib')
 app.config['SECRET_KEY'] = 'prasutagus!'
@@ -89,23 +91,21 @@ def test_message(throttlePos):
 @socketio.on('connect')
 def connect():
     print('Client connected')
+    global blink_pattern
+    blink_pattern=((1, 0.1), (0, 0.1))
 
 @socketio.on('disconnect')
 def disconnect():
     print('Client disconnected')
+    global blink_pattern
+    blink_pattern=((1, 0.5), (0, 0.5))
 
 def app_liveness_led():
     #App LED blink pattern
     while True:
-        gpio.write(LIVENESS_PORT, 1)
-        sleep(0.1)
-        gpio.write(LIVENESS_PORT, 0)
-        sleep(0.1)
-        gpio.write(LIVENESS_PORT, 1)
-        sleep(0.1)
-        gpio.write(LIVENESS_PORT, 0)
-        sleep(2)
-
+        for pattern in blink_pattern:
+            gpio.write(LIVENESS_PORT, pattern[0])
+            sleep(pattern[1])
 
 # Run the app on the local development server
 # Accept any IP address
