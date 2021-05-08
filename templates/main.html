@@ -20,10 +20,12 @@
         height:90%;
         float: left;
       }
+
     </style>
+    <script src="socket.io.js"></script>
   </head>
   <body>
-    <img id="video" src="{{ url_for('video_feed') }}">
+    <img id="video" src="">
 
     <input type="range" id="vertical" name="vertical" min="-50" max="50" orient="vertical">
     <input type="range" id="horizontal" name="horizontal" min="-50" max="50">
@@ -33,29 +35,24 @@
     var horizontal = 0;
     var vertical = 0;
 
-    onRangeChange(document.getElementById('horizontal'), throttleEvents(handleHorizontal, 50));
-    onRangeChange(document.getElementById('vertical'), throttleEvents(handleVertical, 50));
+    document.getElementById('horizontal').addEventListener("input", throttleEvents(handleHorizontal, 75))
+    document.getElementById('vertical').addEventListener("input", throttleEvents(handleVertical, 75))
+    document.getElementById('video').src = window.location.protocol + '//' + window.location.hostname + ":5001/?action=stream"
 
-    function sendToFlask()
-    {
-        const xhr = new XMLHttpRequest();
-        const data = new FormData();
+    var socket = io();
 
-        data.append("horizontal", horizontal);
-        data.append("vertical", vertical);
-
-        xhr.open("POST", "moveservos");
-        xhr.send(data);
-    }
+    socket.on("connect", () => {
+      console.log(socket.id);
+    });
 
     function handleHorizontal(event) {
       horizontal = event.target.value;
-      sendToFlask();
+      socket.emit('rudder', event.target.value);
     }
 
     function handleVertical(event) {
       vertical = event.target.value;
-      sendToFlask()
+      socket.emit('throttle', event.target.value);
     }
 
     function throttleEvents (callback, limit) {
@@ -69,13 +66,6 @@
           }, limit);
         }
       }
-    }
-
-    //https://stackoverflow.com/questions/18544890/onchange-event-on-input-type-range-is-not-triggering-in-firefox-while-dragging
-    function onRangeChange(r,f) {
-      var n,c,m;
-      r.addEventListener("input",function(e){n=1;c=e.target.value;if(c!=m)f(e);m=c;});
-      r.addEventListener("change",function(e){if(!n)f(e);});
     }
   </script>
 </html>

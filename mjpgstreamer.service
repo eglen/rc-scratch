@@ -1,0 +1,11 @@
+[Unit]
+Description=Stream Pi Video
+After=network.target
+
+[Service]
+WorkingDirectory=/home/pi/mjpg-streamer/mjpg-streamer-experimental/
+ExecStart=/home/pi/mjpg-streamer/mjpg-streamer-experimental/start.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
