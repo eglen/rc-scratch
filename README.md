@@ -24,5 +24,6 @@ https://www.stderr.nl/Blog/Hardware/RaspberryPi/PowerButton.html
 https://howchoo.com/g/ytzjyzy4m2e/build-a-simple-raspberry-pi-led-power-status-indicator
 
 ### Pi Camera
-https://github.com/miguelgrinberg/flask-video-streaming
-`pip install picamera`
+https://github.com/waveform80/pistreaming
+`pip install ws4py` - ws4py can't be installed via apt-get anymore with python 3.7 but pip makes all better
+`sudo apt-get install ffmpeg git python3-picamera`

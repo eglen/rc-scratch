@@ -14,7 +14,7 @@
         height: 9%;
       }
 
-      #video {
+      #videoCanvas {
         background-color:#999999;
         width:90%;
         height:90%;
@@ -24,21 +24,27 @@
     </style>
     <script src="socket.io.js"></script>
     <script src="jsmpg.js"></script>
+
   </head>
   <body>
-    <img id="video" src="">
+    <canvas id="videoCanvas" width="{{ width }}" height="{{ height }}">
+    </canvas>
 
     <input type="range" id="vertical" name="vertical" min="-50" max="50" orient="vertical">
     <input type="range" id="horizontal" name="horizontal" min="-50" max="50">
 
   </body>
   <script>
+    var canvas = document.getElementById('videoCanvas');
+    var client = new WebSocket('ws://' + window.location.hostname + ':{{ ws_port }}/');
+    var player = new jsmpeg(client, {canvas:canvas});
+
     var horizontal = 0;
     var vertical = 0;
 
     document.getElementById('horizontal').addEventListener("input", throttleEvents(handleHorizontal, 75))
     document.getElementById('vertical').addEventListener("input", throttleEvents(handleVertical, 75))
-    document.getElementById('video').src = window.location.protocol + '//' + window.location.hostname + ":5001/?action=stream"
+    //document.getElementById('video').src = window.location.protocol + '//' + window.location.hostname + ":5001/?action=stream"
 
     var socket = io();
 
